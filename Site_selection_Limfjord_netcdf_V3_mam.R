@@ -1,0 +1,148 @@
+#Aarhus University January 2022, Ecoscience, Janus Larsen & Marie Maar. janus@ecos.au.dk
+#extract data from gridded FlexSem model output (NetCdf 4.0) and calculate statistcs
+#calculate site selection indicies
+#make color coded area plots
+
+########## Script settings ##########
+require(ncdf4)
+require(cmocean)
+require(maptools)
+require(fields)
+
+#Janus
+#setwd("C:\\AU\\projects\\FORCOAST\\siteSelectionTool")
+#datFldr = "C:\\data\\FORCOAST\\"
+#Marie 
+setwd("C:\\Users\\au142388\\Documents\\DMU\\FORCOAST\\FlexSem_Limfjorden\\R_FORCOAST")
+datFldr = "C:\\Users\\au142388\\Documents\\DMU\\FORCOAST\\FlexSem_Limfjorden\\"
+
+paramLst = list(botsalt=c("botS","3D",F,"[PSU]"),bottemp=c("botT","3D",F,"[?C]"),chl=c("botchl","3D",F,"[mgchl/m3]"),oxy=c("botoxy","3D",F,"[mg/l]"),resup=c("resup_dd","2D",F,""),fsal=c("botS","3D",T,""),ftem=c("botT","3D",T,""),fchl=c("botchl","3D",T,""),foxy=c("botoxy","3D",T,""),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T,""))
+lm <- c(8.18, 9.5, 56.45, 57.05) # area size
+pal=cmocean("haline")
+
+########## User settings ##########
+defSet = list(
+	param = "ssi",
+	yrs = 2009,
+	mths = 5:9,
+	# salinity threshold (range: 8 to 36)
+	SLT = 16, # salinity lower threshold
+	SUT = 28, # salinity upper threshold
+	# temperature threshold (range: 0 to 35)
+	TLT = 5, # temperature lower threshold 5
+	TUT = 26, # temperature upper threshold 26
+	# half saturation constant for food
+	Kf = 0.75,  #mg chl/m3
+	# O2 lower threshold
+	O2LT = 4.5,
+	# threshold resuspension
+	Kr = 0.5, #  g-POM/m2/d
+	decay_dd = -4 # exp decay
+)
+
+
+########## Functions  ##########
+
+#identify NetCdf files, read data and calculate mean and SD (usefunc=SD)
+getData <- function(uset,usefunc=mean) {
+	if (is.null(paramLst[[uset$param]])) stop("No such parameter")
+	lon=c();lat=c()
+	cc=1
+	for (y in uset$yrs) {
+		if (y<2009 | y>2017) stop("Invalid year")
+		nc = nc_open(paste0(datFldr,"nc_files_",y,"\\limfjord",paramLst[[uset$param]][2],"_",paramLst[[uset$param]][1],"_",y,".nc"))
+		if (cc==1) { 
+			lon=ncvar_get(nc,"Lon")
+			lat=ncvar_get(nc,"Lat")
+			dat=array(dim=c(length(lat),length(lon),length(uset$yrs)*length(uset$mths)))
+		}
+		for (m in uset$mths) {
+			dat[,,cc] = ncvar_get(nc,start=c(1,1,m),count=c(-1,-1,1)) #NB: assumes only one variable in nc file 
+			cc=cc+1
+		}
+		nc_close(nc)
+	}
+	return(list(lon=lon,lat=lat,dat=apply(dat,1:2,usefunc)))
+}
+
+#create color coded area plot
+plotData <- function(uset,dat,pngfile=NA) {
+	if (!exists("spcoast")) load("spdk.RData")
+	if (!is.na(pngfile)) png(pngfile,width=1000,height=600)
+	par(mar=c(2,2,2,2),oma=c(0,0,0,2),cex=2,mgp=c(3, .5, 0))
+	plot(NA,xlim=lm[1:2],ylim=lm[3:4],asp=1,xlab="",ylab="")
+	mtext(uset$param,line=0.5,cex=2)
+	image(dat$lon,dat$lat,t(dat$dat),col=pal(100),add=T)
+	plot(spcoast,col="#B4D79E",axes=T,add=T,lwd=1,border="grey")
+	image.plot(dat$dat, col = pal(100), legend.shrink = 0.8, ann = F,legend.only=T,legend.width = 2,legend.mar=2.4,legend.args=list(text=paramLst[[uset$param]][4], side=3, font=2, line=0, cex=0.8))
+	if (!is.na(pngfile)) dev.off()
+}
+
+calcSSI <- function(uset,meandat) {
+	ssi=NA
+	if (uset$param=="fsal") {
+		slope = 1/(uset$SUT-uset$SLT)
+		ssi = slope*(meandat-uset$SLT)
+		ssi[ssi <0] <- 0
+		ssi[ssi >1] <- 1
+	} else if (uset$param=="ftem") {
+	  slope = 1/(uset$TUT-uset$TLT)
+	  ssi = slope*(meandat-uset$TLT)
+	  ssi[ssi <0] <- 0
+	  ssi[ssi >1] <- 1
+	} else if (uset$param=="fchl") {
+		cchl = 6.625*12/2 #conversion from mgChl/m3 to to mg-C/m3
+		food = meandat*cchl
+		ssi <- food/(food+uset$Kf*cchl)
+	} else if (uset$param=="foxy") {
+		oxyconv = 32/1000 # from mmol-O2/m3 to mg-O2/l
+		hypox = meandat*oxyconv
+		ssi <- hypox/max(hypox,na.rm=TRUE)
+		ssi[hypox<uset$O2LT] <- 0
+	} else if (uset$param=="fres") {
+		CN = 6.625*12 #conversion from mmol-N/m3 to to mg-C/m3
+		SPM_conv = 0.2*1000 # from ugC/l to mgPOM/l
+		tstep = 150 #sec in model
+		seddep = 0.1 # depth of sediment layer (m)
+		resup = meandat*CN/SPM_conv/tstep*86400*seddep
+		resth = (resup - uset$Kr)
+		resth[resth <0] <- 0
+		ssi = exp(resth*uset$decay_dd)
+	} else stop("Unsupported Site Selection Index parameter")
+	ssi <- ssi/max(ssi,na.rm=TRUE) #normalize
+	return(ssi)
+}
+
+doAll <- function(uset,pngfile="plot.png",usefunc=mean) {
+	if (is.null(paramLst[[uset$param]])) stop("No such parameter")
+	if (uset$param=="ssi") {
+		#special case for site selection index
+		tset=uset; tset$param="fsal"; dat=getData(tset); fsal=calcSSI(tset,dat$dat)
+		tset=uset; tset$param="ftem"; dat=getData(tset); ftem=calcSSI(tset,dat$dat)
+		tset=uset; tset$param="fchl"; dat=getData(tset); fchl=calcSSI(tset,dat$dat)
+		tset=uset; tset$param="foxy"; dat=getData(tset); foxy=calcSSI(tset,dat$dat)
+		tset=uset; tset$param="fres"; dat=getData(tset); fres=calcSSI(tset,dat$dat)
+		ssi = fchl*foxy*fsal*ftem*fres
+		ssi <- ssi/max(ssi,na.rm=TRUE) #normalize
+		dat$dat=ssi
+	} else {
+		dat=getData(uset,usefunc)
+		if (paramLst[[uset$param]][3]) dat$dat=calcSSI(uset,dat$dat)
+	}
+	plotData(uset,dat,pngfile)
+}
+
+
+#Examples of use
+#test=getData("botsalt")
+uset=defSet; uset$param="botsalt"; uset$yrs=2009:2010; uset$SLT=17; uset$SUT=27; doAll(uset,pngfile="botsalt.png")
+uset=defSet; uset$param="bottemp"; uset$yrs=c(2009,2011,2013,2015,2017); uset$mths=6:7; uset$TUT=25; doAll(uset,pngfile="bottemp.png")
+uset=defSet; uset$param="chl"; uset$yrs=2017; uset$mths=1:12; uset$Kf=0.8; doAll(uset,pngfile="chl.png")
+uset=defSet; uset$param="oxy"; uset$O2LT=4.0; doAll(uset,pngfile="oxy.png")
+uset=defSet; uset$param="resup"; uset$yrs=2009:2017; uset$mths=1:12; uset$Kr = 0.40; uset$decay_dd=-3; doAll(uset,pngfile="resup.png")
+uset=defSet; uset$param="fsal"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="fsal.png")
+uset=defSet; uset$param="ftem"; doAll(uset,pngfile="ftem.png")
+uset=defSet; uset$param="fchl"; uset$yrs=2017; uset$mths=7; doAll(uset,pngfile="fchl.png")
+uset=defSet; uset$param="foxy"; uset$yrs=2009:2015; uset$mths=3:10; doAll(uset,pngfile="foxy.png")
+uset=defSet; uset$param="fres"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="fres.png")
+uset=defSet; uset$yrs=2009:2017; uset$mths=mths=1:12; doAll(uset,pngfile="ssi.png") #everything
