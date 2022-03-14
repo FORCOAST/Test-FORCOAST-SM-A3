@@ -6,10 +6,7 @@ To build this image: <br />
 -cd %directory of the dockerfile% <br />
 -Then run the command: "docker build -t forcoast-sm-a3 ."
 
-To run the container: <br />
-- "docker run forcoast-sm-a3" will run the container with the image on default parameters <br />
-- To run with parameters "docker run -e parameter=value focoast-sm-a3" <br />
-- Example: "docker run -e years=2009 -e mb=5 -e me=9 forcoast-sm=a3" <br />
+
 
 Available parameters:  <br />
 - years : the input year, default: 2009 <br />
@@ -23,3 +20,8 @@ Available parameters:  <br />
 - o : oxygen lower treshold, default: 4.5 <br />
 - kr : treshold resuspension (g-POM/m2/d), default: 0.5 <br />
 - d : expected decay, default: -4
+
+To run the container: <br />
+- "docker run forcoast-sm-a3 $1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12" all parameters need to be given <br />
+- Example with default values: "docker run forcoast-sm-a3 2009 5 9 16 28 5 26 0.75 4.5 0.5 -4"
+
