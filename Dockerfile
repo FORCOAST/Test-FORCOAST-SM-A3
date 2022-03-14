@@ -28,6 +28,8 @@ RUN apt-get update -y
 
 RUN apt-get install -y libnetcdf-*
 
+RUN chmod 755 /usr/src/app/run.sh
+
 RUN Rscript /usr/src/app/install_packages.R
 
 ENTRYPOINT ["/usr/src/app/run.sh"]
