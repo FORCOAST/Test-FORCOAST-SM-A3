@@ -1,0 +1,17 @@
+version: '3'
+services:
+  test-forcoast-sm-a3:
+    image: test-forcoast-sm-a3  
+    environment: 
+     - param=ssi
+     - years=2009
+     - mb=5
+     - me=9
+     - sl=16
+     - su=28
+     - tl=5
+     - tu=26
+     - kf=0.75
+     - o=4.5
+     - kr=0.5
+     - d=-4
