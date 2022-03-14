@@ -13,31 +13,35 @@ require(fields)
 #setwd("C:\\AU\\projects\\FORCOAST\\siteSelectionTool")
 #datFldr = "C:\\data\\FORCOAST\\"
 #Marie 
-setwd("./Test-FORCOAST-SM-A3")
-datFldr = "/Test-FORCOAST-SM-A3/"
+setwd(".")
+datFldr = "/usr/src/app/"
 
 paramLst = list(botsalt=c("botS","3D",F,"[PSU]"),bottemp=c("botT","3D",F,"[?C]"),chl=c("botchl","3D",F,"[mgchl/m3]"),oxy=c("botoxy","3D",F,"[mg/l]"),resup=c("resup_dd","2D",F,""),fsal=c("botS","3D",T,""),ftem=c("botT","3D",T,""),fchl=c("botchl","3D",T,""),foxy=c("botoxy","3D",T,""),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T,""))
 lm <- c(8.18, 9.5, 56.45, 57.05) # area size
 pal=cmocean("haline")
 
+
+
 ########## User settings ##########
+args <- commandArgs(trailingOnly = TRUE)
+
 defSet = list(
 	param = Sys.getenv("param", "ssi"),
-	yrs = as.numeric(Sys.getenv("years", 2009)),
-	mths = as.numeric(Sys.getenv("mb", 5):Sys.getenv("me", 9)),
+	yrs = args[1],
+	mths = as.numeric(args[2]:as.numeric(args[3])),
 	# salinity threshold (range: 8 to 36)
-	SLT = as.numeric(Sys.getenv("sl", 16)), # salinity lower threshold
-	SUT = as.numeric(Sys.getenv("su", 28)), # salinity upper threshold
+	SLT = as.numeric(args[4]), # salinity lower threshold
+	SUT = as.numeric(args[5]), # salinity upper threshold
 	# temperature threshold (range: 0 to 35)
-	TLT = as.numeric(Sys.getenv("tl", 5)), # temperature lower threshold 5
-	TUT = as.numeric(Sys.getenv("tu", 26)), # temperature upper threshold 26
+	TLT = as.numeric(args[6]), # temperature lower threshold 5
+	TUT = as.numeric(args[7]), # temperature upper threshold 26
 	# half saturation constant for food
-	Kf = as.numeric(Sys.getenv("kf", 0.75)),  #mg chl/m3
+	Kf = as.numeric(args[8]),  #mg chl/m3
 	# O2 lower threshold
-	O2LT = as.numeric(Sys.getenv("o", 4.5)),
+	O2LT = as.numeric(args[9]),
 	# threshold resuspension
-	Kr = as.numeric(Sys.getenv("kr", 0.5)), #  g-POM/m2/d
-	decay_dd = as.numeric(Sys.getenv("d", -4)) # exp decay
+	Kr = as.numeric(args[11]), #  g-POM/m2/d
+	decay_dd = as.numeric(args[12]) # exp decay
 )
 
 
@@ -135,14 +139,14 @@ doAll <- function(uset,pngfile="plot.png",usefunc=mean) {
 
 #Examples of use
 #test=getData("botsalt")
-uset=defSet; uset$param="botsalt"; uset$yrs=2009:2010; uset$SLT=17; uset$SUT=27; doAll(uset,pngfile="botsalt.png")
-uset=defSet; uset$param="bottemp"; uset$yrs=c(2009,2011,2013,2015,2017); uset$mths=6:7; uset$TUT=25; doAll(uset,pngfile="bottemp.png")
-uset=defSet; uset$param="chl"; uset$yrs=2017; uset$mths=1:12; uset$Kf=0.8; doAll(uset,pngfile="chl.png")
-uset=defSet; uset$param="oxy"; uset$O2LT=4.0; doAll(uset,pngfile="oxy.png")
-uset=defSet; uset$param="resup"; uset$yrs=2009:2017; uset$mths=1:12; uset$Kr = 0.40; uset$decay_dd=-3; doAll(uset,pngfile="resup.png")
-uset=defSet; uset$param="fsal"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="fsal.png")
-uset=defSet; uset$param="ftem"; doAll(uset,pngfile="ftem.png")
-uset=defSet; uset$param="fchl"; uset$yrs=2017; uset$mths=7; doAll(uset,pngfile="fchl.png")
-uset=defSet; uset$param="foxy"; uset$yrs=2009:2015; uset$mths=3:10; doAll(uset,pngfile="foxy.png")
-uset=defSet; uset$param="fres"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="fres.png")
-uset=defSet; uset$yrs=2009:2017; uset$mths=mths=1:12; doAll(uset,pngfile="ssi.png") #everything
+uset=defSet; uset$param="botsalt"; uset$yrs=2009:2010; uset$SLT=17; uset$SUT=27; doAll(uset,pngfile="output/botsalt.png")
+uset=defSet; uset$param="bottemp"; uset$yrs=c(2009,2011,2013,2015,2017); uset$mths=6:7; uset$TUT=25; doAll(uset,pngfile="output/bottemp.png")
+uset=defSet; uset$param="chl"; uset$yrs=2017; uset$mths=1:12; uset$Kf=0.8; doAll(uset,pngfile="output/chl.png")
+uset=defSet; uset$param="oxy"; uset$O2LT=4.0; doAll(uset,pngfile="output/oxy.png")
+uset=defSet; uset$param="resup"; uset$yrs=2009:2017; uset$mths=1:12; uset$Kr = 0.40; uset$decay_dd=-3; doAll(uset,pngfile="output/resup.png")
+uset=defSet; uset$param="fsal"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="output/fsal.png")
+uset=defSet; uset$param="ftem"; doAll(uset,pngfile="output/ftem.png")
+uset=defSet; uset$param="fchl"; uset$yrs=2017; uset$mths=7; doAll(uset,pngfile="output/fchl.png")
+uset=defSet; uset$param="foxy"; uset$yrs=2009:2015; uset$mths=3:10; doAll(uset,pngfile="output/foxy.png")
+uset=defSet; uset$param="fres"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="output/fres.png")
+uset=defSet; uset$yrs=2009:2017; uset$mths=mths=1:12; doAll(uset,pngfile="output/ssi.png") #everything
