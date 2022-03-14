@@ -13,8 +13,8 @@ require(fields)
 #setwd("C:\\AU\\projects\\FORCOAST\\siteSelectionTool")
 #datFldr = "C:\\data\\FORCOAST\\"
 #Marie 
-setwd("C:\\Users\\au142388\\Documents\\DMU\\FORCOAST\\FlexSem_Limfjorden\\R_FORCOAST")
-datFldr = "C:\\Users\\au142388\\Documents\\DMU\\FORCOAST\\FlexSem_Limfjorden\\"
+setwd("./Test-FORCOAST-SM-A3")
+datFldr = "/Test-FORCOAST-SM-A3/"
 
 paramLst = list(botsalt=c("botS","3D",F,"[PSU]"),bottemp=c("botT","3D",F,"[?C]"),chl=c("botchl","3D",F,"[mgchl/m3]"),oxy=c("botoxy","3D",F,"[mg/l]"),resup=c("resup_dd","2D",F,""),fsal=c("botS","3D",T,""),ftem=c("botT","3D",T,""),fchl=c("botchl","3D",T,""),foxy=c("botoxy","3D",T,""),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T,""))
 lm <- c(8.18, 9.5, 56.45, 57.05) # area size
@@ -22,22 +22,22 @@ pal=cmocean("haline")
 
 ########## User settings ##########
 defSet = list(
-	param = "ssi",
-	yrs = 2009,
-	mths = 5:9,
+	param = Sys.getenv("param", "ssi"),
+	yrs = as.numeric(Sys.getenv("years", 2009)),
+	mths = as.numeric(Sys.getenv("mb", 5):Sys.getenv("me", 9)),
 	# salinity threshold (range: 8 to 36)
-	SLT = 16, # salinity lower threshold
-	SUT = 28, # salinity upper threshold
+	SLT = as.numeric(Sys.getenv("sl", 16)), # salinity lower threshold
+	SUT = as.numeric(Sys.getenv("su", 28)), # salinity upper threshold
 	# temperature threshold (range: 0 to 35)
-	TLT = 5, # temperature lower threshold 5
-	TUT = 26, # temperature upper threshold 26
+	TLT = as.numeric(Sys.getenv("tl", 5)), # temperature lower threshold 5
+	TUT = as.numeric(Sys.getenv("tu", 26)), # temperature upper threshold 26
 	# half saturation constant for food
-	Kf = 0.75,  #mg chl/m3
+	Kf = as.numeric(Sys.getenv("kf", 0.75)),  #mg chl/m3
 	# O2 lower threshold
-	O2LT = 4.5,
+	O2LT = as.numeric(Sys.getenv("o", 4.5)),
 	# threshold resuspension
-	Kr = 0.5, #  g-POM/m2/d
-	decay_dd = -4 # exp decay
+	Kr = as.numeric(Sys.getenv("kr", 0.5)), #  g-POM/m2/d
+	decay_dd = as.numeric(Sys.getenv("d", -4)) # exp decay
 )
 
 
@@ -50,7 +50,7 @@ getData <- function(uset,usefunc=mean) {
 	cc=1
 	for (y in uset$yrs) {
 		if (y<2009 | y>2017) stop("Invalid year")
-		nc = nc_open(paste0(datFldr,"nc_files_",y,"\\limfjord",paramLst[[uset$param]][2],"_",paramLst[[uset$param]][1],"_",y,".nc"))
+		nc = nc_open(paste0(datFldr,"nc_files_",y,"/limfjord",paramLst[[uset$param]][2],"_",paramLst[[uset$param]][1],"_",y,".nc"))
 		if (cc==1) { 
 			lon=ncvar_get(nc,"Lon")
 			lat=ncvar_get(nc,"Lat")
