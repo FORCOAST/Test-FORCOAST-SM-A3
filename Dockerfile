@@ -11,6 +11,7 @@ RUN mkdir -p /usr/src/app/nc_files_2014
 RUN mkdir -p /usr/src/app/nc_files_2015
 RUN mkdir -p /usr/src/app/nc_files_2016
 RUN mkdir -p /usr/src/app/nc_files_2017
+RUN mkdir -p /usr/src/app/output
 
 COPY . /usr/src/app
 
@@ -28,8 +29,10 @@ RUN apt-get update -y
 
 RUN apt-get install -y libnetcdf-*
 
-RUN chmod 755 /usr/src/app/run.sh
+WORKDIR pwd
 
 RUN Rscript /usr/src/app/install_packages.R
 
-ENTRYPOINT ["/usr/src/app/run.sh"]
+RUN chmod 755 /usr/src/app/run.sh
+
+ENTRYPOINT ["sh", "/usr/src/app/run.sh"]
