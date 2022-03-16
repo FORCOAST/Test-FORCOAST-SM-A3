@@ -2,6 +2,7 @@
 Test of SM A3 for containerisation
 
 To build this image: <br />
+-Make sure run.sh EOL is in Unix <br />
 -Open cmd or powershell with Docker running <br />
 -cd %directory of the dockerfile% <br />
 -Then run the command: "docker build -t forcoast-sm-a3 ."
