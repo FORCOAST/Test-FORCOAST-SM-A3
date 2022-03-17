@@ -15,15 +15,19 @@ require(fields)
 #Marie 
 setwd(".")
 datFldr = "/usr/src/app/"
+args <- commandArgs(trailingOnly = TRUE)
 
 paramLst = list(botsalt=c("botS","3D",F,"[PSU]"),bottemp=c("botT","3D",F,"[?C]"),chl=c("botchl","3D",F,"[mgchl/m3]"),oxy=c("botoxy","3D",F,"[mg/l]"),resup=c("resup_dd","2D",F,""),fsal=c("botS","3D",T,""),ftem=c("botT","3D",T,""),fchl=c("botchl","3D",T,""),foxy=c("botoxy","3D",T,""),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T,""))
-lm <- c(8.18, 9.5, 56.45, 57.05) # area size
+#Args[12] = center point lat, args[13] = center point lon, args[14] = horizantal range
+#args[12]-0.5*args[14] is center point - radius, 
+#args[13]-0.45*0.5*args[14] is center point - ratio lat/lon in image*radius
+lm <- c(as.numeric(args[12])-0.5*as.numeric(args[14]), as.numeric(args[12])+0.5*as.numeric(args[14]), as.numeric(args[13])-0.45*0.5*as.numeric(args[14]), as.numeric(args[13])+0.45*0.5*as.numeric(args[14])) # area size
 pal=cmocean("haline")
-
+#Define figure titles
+names <- list(botsalt="Salt content on bottom", bottemp="Temperature on the bottom", chl="Chrolophyll content of water", oxy="Oxygen content of water", resup="resuspension", fsal="f salinity", ftem="f temperature", fchl="f chlorophyll", foxy="f oxy", fres= "f resuspension", ssi="Selected sites of interest")
 
 
 ########## User settings ##########
-args <- commandArgs(trailingOnly = TRUE)
 
 defSet = list(
 	param = Sys.getenv("param", "ssi"),
@@ -40,8 +44,8 @@ defSet = list(
 	# O2 lower threshold
 	O2LT = as.numeric(args[9]),
 	# threshold resuspension
-	Kr = as.numeric(args[11]), #  g-POM/m2/d
-	decay_dd = as.numeric(args[12]) # exp decay
+	Kr = as.numeric(args[10]), #  g-POM/m2/d
+	decay_dd = as.numeric(args[11]) # exp decay
 )
 
 
@@ -70,12 +74,12 @@ getData <- function(uset,usefunc=mean) {
 }
 
 #create color coded area plot
-plotData <- function(uset,dat,pngfile=NA) {
+plotData <- function(uset,dat,pngfile=NA,figname) {
 	if (!exists("spcoast")) load("spdk.RData")
 	if (!is.na(pngfile)) png(pngfile,width=1000,height=600)
 	par(mar=c(2,2,2,2),oma=c(0,0,0,2),cex=2,mgp=c(3, .5, 0))
 	plot(NA,xlim=lm[1:2],ylim=lm[3:4],asp=1,xlab="",ylab="")
-	mtext(uset$param,line=0.5,cex=2)
+	mtext(figname,line=0.5,cex=2)
 	image(dat$lon,dat$lat,t(dat$dat),col=pal(100),add=T)
 	plot(spcoast,col="#B4D79E",axes=T,add=T,lwd=1,border="grey")
 	image.plot(dat$dat, col = pal(100), legend.shrink = 0.8, ann = F,legend.only=T,legend.width = 2,legend.mar=2.4,legend.args=list(text=paramLst[[uset$param]][4], side=3, font=2, line=0, cex=0.8))
@@ -117,7 +121,7 @@ calcSSI <- function(uset,meandat) {
 	return(ssi)
 }
 
-doAll <- function(uset,pngfile="plot.png",usefunc=mean) {
+doAll <- function(figname,uset,pngfile="plot.png",usefunc=mean) {
 	if (is.null(paramLst[[uset$param]])) stop("No such parameter")
 	if (uset$param=="ssi") {
 		#special case for site selection index
@@ -133,20 +137,20 @@ doAll <- function(uset,pngfile="plot.png",usefunc=mean) {
 		dat=getData(uset,usefunc)
 		if (paramLst[[uset$param]][3]) dat$dat=calcSSI(uset,dat$dat)
 	}
-	plotData(uset,dat,pngfile)
+	plotData(uset,dat,pngfile,figname)
 }
 
 
 #Examples of use
 #test=getData("botsalt")
-uset=defSet; uset$param="botsalt"; uset$yrs=2009:2010; uset$SLT=17; uset$SUT=27; doAll(uset,pngfile="output/botsalt.png")
-uset=defSet; uset$param="bottemp"; uset$yrs=c(2009,2011,2013,2015,2017); uset$mths=6:7; uset$TUT=25; doAll(uset,pngfile="output/bottemp.png")
-uset=defSet; uset$param="chl"; uset$yrs=2017; uset$mths=1:12; uset$Kf=0.8; doAll(uset,pngfile="output/chl.png")
-uset=defSet; uset$param="oxy"; uset$O2LT=4.0; doAll(uset,pngfile="output/oxy.png")
-uset=defSet; uset$param="resup"; uset$yrs=2009:2017; uset$mths=1:12; uset$Kr = 0.40; uset$decay_dd=-3; doAll(uset,pngfile="output/resup.png")
-uset=defSet; uset$param="fsal"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="output/fsal.png")
-uset=defSet; uset$param="ftem"; doAll(uset,pngfile="output/ftem.png")
-uset=defSet; uset$param="fchl"; uset$yrs=2017; uset$mths=7; doAll(uset,pngfile="output/fchl.png")
-uset=defSet; uset$param="foxy"; uset$yrs=2009:2015; uset$mths=3:10; doAll(uset,pngfile="output/foxy.png")
-uset=defSet; uset$param="fres"; uset$yrs=2012; uset$mths=5; doAll(uset,pngfile="output/fres.png")
-uset=defSet; uset$yrs=2009:2017; uset$mths=mths=1:12; doAll(uset,pngfile="output/ssi.png") #everything
+uset=defSet; uset$param="botsalt"; uset$yrs=2009:2010; uset$SLT=17; uset$SUT=27; doAll(names$botsalt,uset,pngfile="output/botsalt.png")
+uset=defSet; uset$param="bottemp"; uset$yrs=c(2009,2011,2013,2015,2017); uset$mths=6:7; uset$TUT=25; doAll(names$bottemp,uset,pngfile="output/bottemp.png")
+uset=defSet; uset$param="chl"; uset$yrs=2017; uset$mths=1:12; uset$Kf=0.8; doAll(names$chl,uset,pngfile="output/chl.png")
+uset=defSet; uset$param="oxy"; uset$O2LT=4.0; doAll(names$oxy,uset,pngfile="output/oxy.png")
+uset=defSet; uset$param="resup"; uset$yrs=2009:2017; uset$mths=1:12; uset$Kr = 0.40; uset$decay_dd=-3; doAll(names$resup,uset,pngfile="output/resup.png")
+uset=defSet; uset$param="fsal"; uset$yrs=2012; uset$mths=5; doAll(names$fsal,uset,pngfile="output/fsal.png")
+uset=defSet; uset$param="ftem"; doAll(names$ftem,uset,pngfile="output/ftem.png")
+uset=defSet; uset$param="fchl"; uset$yrs=2017; uset$mths=7; doAll(names$fchl,uset,pngfile="output/fchl.png")
+uset=defSet; uset$param="foxy"; uset$yrs=2009:2015; uset$mths=3:10; doAll(names$foxy,uset,pngfile="output/foxy.png")
+uset=defSet; uset$param="fres"; uset$yrs=2012; uset$mths=5; doAll(names$fres,uset,pngfile="output/fres.png")
+uset=defSet; uset$yrs=2009:2017; uset$mths=mths=1:12; doAll(names$ssi,uset,pngfile="output/ssi.png") #everything
