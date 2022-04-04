@@ -25,11 +25,12 @@ Available parameters:  <br />
 - tc : Telegram chat ID <br />
 - b : Bulletin to be sent <br />
 - m: method, specify file or URL as input <br />
-- c_lon: center point longitude <br />
-- c_lat: center point latitude <br />
-- r_lon: the longitude range of the map, if centerpoint is 8 and range is 1, the limits will be 7.5 and 8.5 <br />
+- Wbb: Bounding box west <br />
+- Ebb: Bounding box east <br />
+- Sbb: Bounding box south <br />
+- Nbb: Bounding box north <br />
 
 To run the container: <br />
-- "docker run forcoast-sm-a3 years mb me sl su tl tu kf o kr d tb tc b m c_lon c_lat r_lon" all parameters need to be given <br />
-- Example with default values: "docker run forcoast-sm-a3 2009 5 9 16 28 5 26 0.75 4.5 0.5 -4 5267228188:AAGx60FtWgHkScBb3ISFL1dp6Oq_9z9z0rw -1001773490347 ./output/bulletin.png file 8.84 56.75 0.66"
+- "docker run forcoast-sm-a3 years mb me sl su tl tu kf o kr d tb tc b m Wbb Ebb Sbb Nbb" all parameters need to be given <br />
+- Example with default values: "docker run forcoast-sm-a3 2009 5 9 16 28 5 26 0.75 4.5 0.5 -4 5267228188:AAGx60FtWgHkScBb3ISFL1dp6Oq_9z9z0rw -1001773490347 ./output/bulletin.png file 8.18, 9.5, 56.45, 57.05"
 
