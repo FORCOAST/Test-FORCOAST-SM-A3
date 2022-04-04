@@ -25,10 +25,10 @@ Available parameters:  <br />
 - tc : Telegram chat ID <br />
 - b : Bulletin to be sent <br />
 - m: method, specify file or URL as input <br />
-- Wbb: Bounding box west <br />
-- Ebb: Bounding box east <br />
-- Sbb: Bounding box south <br />
-- Nbb: Bounding box north <br />
+- Wbb: Bounding box west, default: 8.18 <br />
+- Ebb: Bounding box east, default: 9.5 <br />
+- Sbb: Bounding box south, default: 56.45 <br />
+- Nbb: Bounding box north, default: 57.05 <br />
 
 To run the container: <br />
 - "docker run forcoast-sm-a3 years mb me sl su tl tu kf o kr d tb tc b m Wbb Ebb Sbb Nbb" all parameters need to be given <br />
