@@ -18,10 +18,12 @@ datFldr = "/usr/src/app/"
 args <- commandArgs(trailingOnly = TRUE)
 
 paramLst = list(botsalt=c("botS","3D",F,"[PSU]"),bottemp=c("botT","3D",F,"[?C]"),chl=c("botchl","3D",F,"[mgchl/m3]"),oxy=c("botoxy","3D",F,"[mg/l]"),resup=c("resup_dd","2D",F,""),fsal=c("botS","3D",T,""),ftem=c("botT","3D",T,""),fchl=c("botchl","3D",T,""),foxy=c("botoxy","3D",T,""),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T,""))
-#Args[12] = center point lat, args[13] = center point lon, args[14] = horizantal range
-#args[12]-0.5*args[14] is center point - radius, 
-#args[13]-0.45*0.5*args[14] is center point - ratio lat/lon in image*radius
-lm <- c(as.numeric(args[12])-0.5*as.numeric(args[14]), as.numeric(args[12])+0.5*as.numeric(args[14]), as.numeric(args[13])-0.45*0.5*as.numeric(args[14]), as.numeric(args[13])+0.45*0.5*as.numeric(args[14])) # area size
+#Args[12] = western bb, args[13] = eastern bb, args [14] = southern bb, args [15] = northern bb
+Wbb <- as.numeric(args[12])
+Ebb <- as.numeric(args[13])
+Sbb <- as.numeric(args[14])
+Nbb <- as.numeric(args[15])
+lm <- c(Wbb, Ebb, Sbb, Nbb) # area size
 pal=cmocean("haline")
 #Define figure titles
 names <- list(botsalt="Salt content on bottom", bottemp="Temperature on the bottom", chl="Chrolophyll content of water", oxy="Oxygen content of water", resup="resuspension", fsal="f salinity", ftem="f temperature", fchl="f chlorophyll", foxy="f oxy", fres= "f resuspension", ssi="Selected sites of interest")
