@@ -45,4 +45,5 @@ RUN Rscript /usr/src/app/install_packages.R
 
 RUN chmod 755 /usr/src/app/run.sh
 
+# ENTRYPOINT ["bash", "-c"]
 ENTRYPOINT ["sh", "/usr/src/app/run.sh"]

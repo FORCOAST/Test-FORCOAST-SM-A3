@@ -32,5 +32,5 @@ Available parameters:  <br />
 
 To run the container: <br />
 - "docker run forcoast-sm-a3 years mb me sl su tl tu kf o kr d tb tc b m Wbb Ebb Sbb Nbb" all parameters need to be given <br />
-- Example with default values: "docker run forcoast-sm-a3 2009 5 9 16 28 5 26 0.75 4.5 0.5 -4 5267228188:AAGx60FtWgHkScBb3ISFL1dp6Oq_9z9z0rw -1001773490347 ./output/bulletin.png file 8.18, 9.5, 56.45, 57.05"
+- Example with default values: "docker run forcoast-sm-a3 2009 5 9 16 28 5 26 0.75 4.5 0.5 -4 5267228188:AAGx60FtWgHkScBb3ISFL1dp6Oq_9z9z0rw -1001773490347 ./output/bulletin.png file 8.18 9.5 56.45 57.05"
 
