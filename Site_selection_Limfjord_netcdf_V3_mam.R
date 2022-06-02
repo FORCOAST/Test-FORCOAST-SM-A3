@@ -26,7 +26,7 @@ Nbb <- as.numeric(args[15])
 lm <- c(Wbb, Ebb, Sbb, Nbb) # area size
 pal=cmocean("haline")
 #Define figure titles
-names <- list(botsalt=c("Bottom salinity", "psu\n"), bottemp=c("Bottom water temperature", "\U000000B0C\n"), chl=c("Chrolophyll concentration", "    mg-chl/m\U00B3\n"), oxy=c("Oxygen concentration","   mg-O\U00B2/L\n"), resup=c("resuspension",""), fsal=c("f salinity",""), ftem=c("f temperature",""), fchl=c("f chlorophyll",""), foxy=c("f oxy",""), fres= c("f resuspension",""), ssi=c("Site suitability index","  Index\n\t1 = Most suitable\n\t0 = Least suitable\n"))
+names <- list(botsalt=c("Bottom salinity", "PSU\n"), bottemp=c("Bottom water temperature", "\U000000B0C\n"), chl=c("Chrolophyll concentration", "    mg-chl/m\U00B3\n"), oxy=c("Oxygen concentration","   mg-O\U00B2/L\n"), resup=c("resuspension",""), fsal=c("f salinity",""), ftem=c("f temperature",""), fchl=c("f chlorophyll",""), foxy=c("f oxy",""), fres= c("f resuspension",""), ssi=c("Site suitability index","  Index\n\t1 = Most suitable\n\t0 = Least suitable\n"))
 
 
 ########## User settings ##########
