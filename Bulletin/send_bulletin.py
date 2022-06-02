@@ -43,33 +43,22 @@ def send_bulletin(token,chat_id,bulletin,method):
 		bot.sendPhoto(chat_id, photo=open('bulletin.png', 'rb'))
 
 
+
 #Assign outcome images to variable
-botsalt = Image.open(r"/usr/src/app/output/botsalt.png")
-bottemp = Image.open(r"/usr/src/app/output/bottemp.png")
-chl = Image.open(r"/usr/src/app/output/chl.png")
-fchl = Image.open(r"/usr/src/app/output/fchl.png")
-foxy = Image.open(r"/usr/src/app/output/foxy.png")
-fres = Image.open(r"/usr/src/app/output/fres.png")
-fsal = Image.open(r"/usr/src/app/output/fsal.png")
-ftem = Image.open(r"/usr/src/app/output/ftem.png")
-oxy = Image.open(r"/usr/src/app/output/oxy.png")
-resup = Image.open(r"/usr/src/app/output/resup.png")
-ssi = Image.open(r"/usr/src/app/output/ssi.png")
+botsalt = Image.open("/usr/src/app/output/botsalt.png")
+bottemp = Image.open("/usr/src/app/output/bottemp.png")
+chl = Image.open("/usr/src/app/output/chl.png")
+oxy = Image.open("/usr/src/app/output/oxy.png")
+ssi = Image.open("/usr/src/app/output/ssi.png")
 
-logo = Image.open(r"/usr/src/app/Bulletin/FORCOAST_Logo_WhiteBack.png")
-footer = Image.open(r"/usr/src/app/Bulletin/FORCOAST_Footer_Blue.png")
+logo = Image.open("/usr/src/app/Bulletin/FORCOAST_Logo_WhiteBack.png")
+footer = Image.open("/usr/src/app/Bulletin/FORCOAST_Footer_Blue.png")
 
-#get height and width for all images
-#botsalt_width, botsalt_height = botsalt.size
-#bottemp_width, bottemp_height = bottemp.size
-#chl_width, chl_height = chl.size
-#fchl_width, fchl_height = fchl.size
-#foxy_width, foxy_height = foxy.size
-#fres_width, fres_height = fres.size
-#fsal_width, fsal_height = fsal.size
-#ftem_width, ftem_height = ftem.size
-#oxy_width, oxy_height = oxy.size
-#resup_width, resup_height = resup.size
+
+botsalt_width, botsalt_height = botsalt.size
+bottemp_width, bottemp_height = bottemp.size
+chl_width, chl_height = chl.size
+oxy_width, oxy_height = oxy.size
 ssi_width, ssi_height = ssi.size
 logo_width, logo_height = logo.size
 footer_width, footer_height= footer.size
@@ -83,31 +72,28 @@ footer_new_width = 4250
 footer_new_height = int((footer_new_width/footer_width)*footer_height)
 footer_resize = footer.resize((footer_new_width, footer_new_height), PIL.Image.NEAREST)
 
-logo_new_width = 1000
+logo_new_width = 700
 logo_new_height = int((logo_new_width/logo_width)*logo_height)
 logo_resize = logo.resize((logo_new_width, logo_new_height), PIL.Image.NEAREST)
 
-#draw images on bulletin (non-parameter)
-newBulletin = Image.new("RGBA", (4250, 2784), (255, 255, 255))
-newBulletin.paste(botsalt, (1100, 50))
-newBulletin.paste(bottemp, (2150, 50))
-newBulletin.paste(chl, (3200, 50))
-newBulletin.paste(fchl, (3200, 700))
-newBulletin.paste(foxy, (50, 1350))
-newBulletin.paste(fres, (3200, 1350))
-newBulletin.paste(fsal, (50, 2000))
-newBulletin.paste(ftem, (1100, 2000))
-newBulletin.paste(oxy, (2150, 2000))
-newBulletin.paste(resup, (3200, 2000))
-newBulletin.paste(ssi_resize, (1100, 700))
-newBulletin.paste(logo_resize, (50, 50))
-newBulletin.paste(footer_resize, (0, 2650))
+newBulletin = Image.new("RGBA", (4250, 1899), (255, 255, 255))
+newBulletin.paste(botsalt, (50, 466))
+newBulletin.paste(bottemp, (50, 1016))
+newBulletin.paste(chl, (3200, 466))
+newBulletin.paste(oxy, (3200, 1016))
+newBulletin.paste(ssi_resize, (1100, 466))
+newBulletin.paste(logo_resize, (180, 50))
+newBulletin.paste(footer_resize, (0, 1766))
 draw = PIL.ImageDraw.Draw(newBulletin)
-font_title = ImageFont.truetype(r"/usr/src/app/Bulletin/arial.ttf", 100)
-font_param = ImageFont.truetype(r"/usr/src/app/Bulletin/arial.ttf", 50)
-draw.text((50, 660), 'A3: Site prospection', font = font_title, fill=(0,0,0,255))
+
+font_param = ImageFont.truetype("/usr/src/app/Bulletin/ariali.ttf", 30)
+font_title = ImageFont.truetype("/usr/src/app/Bulletin/arial.ttf", 150)
+now = datetime.now()
+dt_string = now.strftime("%a %b %d %H:%M:%S %Y")
 
 
+
+draw.text((1550, 150), 'Site prospection', font = font_title, fill=(23,111,176,255))
 
 if __name__ == '__main__':
 
@@ -132,25 +118,32 @@ if __name__ == '__main__':
     argument = parser.parse_args()
     
     #draw input parameters on bulletin
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     
-    draw.text((50, 780), 'Parameters:\n'\
+    #Month to string
+    mydateB = argument.month_begin
+    mydateB_datetime = datetime.strptime(mydateB, "%m")
+    mydateB_string = mydateB_datetime.strftime("%b")
+    
+    mydateE = argument.month_end
+    mydateE_datetime = datetime.strptime(mydateE, "%m")
+    mydateE_string = mydateE_datetime.strftime("%b")
+    
+    draw.text((3200, 50), 'Bulletin generated on: {11}\n\n'\
+                      'Parameters:\n\n'\
                       'Site: Limfjord\n'\
-                      'Year: {0}\n'\
-                      'Months: {1}:{2}\n'\
-                      'Salinity range: {3}:{4} (g/L)\n'\
-                      'Temperature range: {5}:{6} (C)\n'\
+                      'Period: {0} {1} - {2} {1} \n'\
+                      'Salinity thresholds: {3} - {4}\n'\
+                      'Temperature thresholds: {5} - {6}\n'\
                       'Half saturation constant for food: {7}\n'\
-                      'Oxygen lower treshold: {8} (mg/L)\n'\
+                      'Oxygen lower treshold: {8}\n'\
                       'Resuspension treshold: {9}\n'\
-                      'Expected decay: {10}\n'\
-                      'Bulletin generated on: {11}'
-                      .format(argument.year, argument.month_begin, argument.month_end,\
+                      'Expected dacay: {10}'
+                      .format(mydateB_string, argument.year, mydateE_string, \
                               argument.salinity_low, argument.salinity_high, argument.temperature_low,\
                               argument.temperature_high, argument.food, argument.oxygen_low,\
                               argument.resuspension, argument.decay, dt_string), \
-                       font = font_param, fill=(23,111,176,255))
+                       font = font_param, fill=(0,0,0,255))
+
     #save bulletin
     newBulletin.save(r"/usr/src/app/output/bulletin.png", quality = 100)
     
