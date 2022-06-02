@@ -17,7 +17,7 @@ setwd(".")
 datFldr = "/usr/src/app/"
 args <- commandArgs(trailingOnly = TRUE)
 
-paramLst = list(botsalt=c("botS","3D",F,"[PSU]"),bottemp=c("botT","3D",F,"[?C]"),chl=c("botchl","3D",F,"[mgchl/m3]"),oxy=c("botoxy","3D",F,"[mg/l]"),resup=c("resup_dd","2D",F,""),fsal=c("botS","3D",T,""),ftem=c("botT","3D",T,""),fchl=c("botchl","3D",T,""),foxy=c("botoxy","3D",T,""),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T,""))
+paramLst = list(botsalt=c("botS","3D",F),bottemp=c("botT","3D",F),chl=c("botchl","3D",F),oxy=c("botoxy","3D",F),resup=c("resup_dd","2D",F),fsal=c("botS","3D",T),ftem=c("botT","3D",T),fchl=c("botchl","3D",T),foxy=c("botoxy","3D",T),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T))
 #Args[12] = western bb, args[13] = eastern bb, args [14] = southern bb, args [15] = northern bb
 Wbb <- as.numeric(args[12])
 Ebb <- as.numeric(args[13])
@@ -26,7 +26,7 @@ Nbb <- as.numeric(args[15])
 lm <- c(Wbb, Ebb, Sbb, Nbb) # area size
 pal=cmocean("haline")
 #Define figure titles
-names <- list(botsalt="Salt content on bottom", bottemp="Temperature on the bottom", chl="Chrolophyll content of water", oxy="Oxygen content of water", resup="resuspension", fsal="f salinity", ftem="f temperature", fchl="f chlorophyll", foxy="f oxy", fres= "f resuspension", ssi="Selected sites of interest")
+names <- list(botsalt=c("Bottom salinity", "psu\n"), bottemp=c("Bottom water temperature", "\U000000B0C\n"), chl=c("Chrolophyll concentration", "    mg-chl/m\U00B3\n"), oxy=c("Oxygen concentration","   mg-O\U00B2/L\n"), resup=c("resuspension",""), fsal=c("f salinity",""), ftem=c("f temperature",""), fchl=c("f chlorophyll",""), foxy=c("f oxy",""), fres= c("f resuspension",""), ssi=c("Site suitability index","  Index\n\t1 = Most suitable\n\t0 = Least suitable\n"))
 
 
 ########## User settings ##########
@@ -81,10 +81,10 @@ plotData <- function(uset,dat,pngfile=NA,figname) {
 	if (!is.na(pngfile)) png(pngfile,width=1000,height=600)
 	par(mar=c(2,2,2,2),oma=c(0,0,0,2),cex=2,mgp=c(3, .5, 0))
 	plot(NA,xlim=lm[1:2],ylim=lm[3:4],asp=1,xlab="",ylab="")
-	mtext(figname,line=0.5,cex=2)
+	mtext(figname[1],line=0.5,cex=2)
 	image(dat$lon,dat$lat,t(dat$dat),col=pal(100),add=T)
 	plot(spcoast,col="#B4D79E",axes=T,add=T,lwd=1,border="grey")
-	image.plot(dat$dat, col = pal(100), legend.shrink = 0.8, ann = F,legend.only=T,legend.width = 2,legend.mar=2.4,legend.args=list(text=paramLst[[uset$param]][4], side=3, font=2, line=0, cex=0.8))
+	image.plot(dat$dat, col = pal(100), legend.shrink = 0.98, ann = F,legend.only=T,legend.width = 2,legend.mar=0,legend.args=list(text=figname[2], side=3, font=3, line=0, cex=1.1))
 	if (!is.na(pngfile)) dev.off()
 }
 
