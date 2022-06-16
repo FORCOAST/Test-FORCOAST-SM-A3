@@ -93,8 +93,8 @@ calcSSI <- function(uset,meandat) {
 	if (uset$param=="fsal") {
 		slope = 1/(uset$SUT-uset$SLT)
 		ssi = slope*(meandat-uset$SLT)
-		ifelse(ssi < 0, 0, ssi)
-		ifelse(ssi > 1, 1, ssi)
+		ssi[ssi <0] <- 0
+		ssi[ssi >1] <- 1
 	} else if (uset$param=="ftem") {
 	  slope = 1/(uset$TUT-uset$TLT)
 	  ssi = slope*(meandat-uset$TLT)
