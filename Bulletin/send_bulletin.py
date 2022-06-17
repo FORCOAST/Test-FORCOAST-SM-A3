@@ -99,21 +99,22 @@ if __name__ == '__main__':
 
     # Get input from command line arguments
     parser = argparse.ArgumentParser(description = "Description for my parser")
-    parser.add_argument("-A", "--year", help = "Year parameter", required = True, default = "")
-    parser.add_argument("-B", "--month_begin", help = "Month begin parameter", required = True, default = "")
-    parser.add_argument("-C", "--month_end", help = "Month end parameter", required = True, default = "")
-    parser.add_argument("-D", "--salinity_low", help = "Salinity low parameter", required = True, default = "")
-    parser.add_argument("-E", "--salinity_high", help = "Salinity high parameter", required = True, default = "")
-    parser.add_argument("-F", "--temperature_low", help = "Temperature low parameter", required = True, default = "")
-    parser.add_argument("-G", "--temperature_high", help = "Temperature high parameter", required = True, default = "")
-    parser.add_argument("-H", "--food", help = "Food parameter", required = True, default = "")
-    parser.add_argument("-I", "--oxygen_low", help = "Oxygen low parameter", required = True, default = "")
-    parser.add_argument("-J", "--resuspension", help = "Resuspension treshold parameter", required = True, default = "")
-    parser.add_argument("-K", "--decay", help = "Expected decay parameter", required = True, default = "")
-    parser.add_argument("-L", "--token", help = "Telegram bot token", required = True, default = "")
-    parser.add_argument("-M", "--chat_id", help = "Telegram chat ID", required = True, default = "")
-    parser.add_argument("-N", "--bulletin", help = "Bulletin to be send", required = True, default = "")
-    parser.add_argument("-O", "--method", help = "Specify file or URL as input", required = False, default = "url")
+    parser.add_argument("-A", "--year_begin", help = "Year begin parameter", required = True, default = "")
+    parser.add_argument("-B", "--year_end", help = "Year end parameter", required = True, default = "")
+    parser.add_argument("-C", "--month_begin", help = "Month begin parameter", required = True, default = "")
+    parser.add_argument("-D", "--month_end", help = "Month end parameter", required = True, default = "")
+    parser.add_argument("-E", "--salinity_low", help = "Salinity low parameter", required = True, default = "")
+    parser.add_argument("-F", "--salinity_high", help = "Salinity high parameter", required = True, default = "")
+    parser.add_argument("-G", "--temperature_low", help = "Temperature low parameter", required = True, default = "")
+    parser.add_argument("-H", "--temperature_high", help = "Temperature high parameter", required = True, default = "")
+    parser.add_argument("-I", "--food", help = "Food parameter", required = True, default = "")
+    parser.add_argument("-J", "--oxygen_low", help = "Oxygen low parameter", required = True, default = "")
+    parser.add_argument("-K", "--resuspension", help = "Resuspension treshold parameter", required = True, default = "")
+    parser.add_argument("-L", "--decay", help = "Expected decay parameter", required = True, default = "")
+    parser.add_argument("-M", "--token", help = "Telegram bot token", required = True, default = "")
+    parser.add_argument("-N", "--chat_id", help = "Telegram chat ID", required = True, default = "")
+    parser.add_argument("-O", "--bulletin", help = "Bulletin to be send", required = True, default = "")
+    parser.add_argument("-P", "--method", help = "Specify file or URL as input", required = False, default = "url")
 
     argument = parser.parse_args()
     
@@ -128,17 +129,17 @@ if __name__ == '__main__':
     mydateE_datetime = datetime.strptime(mydateE, "%m")
     mydateE_string = mydateE_datetime.strftime("%b")
     
-    draw.text((3200, 50), 'Bulletin generated on: {11}\n\n'\
+    draw.text((3200, 50), 'Bulletin generated on: {12}\n\n'\
                       'Parameters:\n\n'\
                       'Site: Limfjord\n'\
-                      'Period: {0} {1} - {2} {1} \n'\
-                      'Salinity thresholds: {3} - {4}\n'\
-                      'Temperature thresholds: {5} - {6}\n'\
-                      'Half saturation constant for food: {7}\n'\
-                      'Oxygen lower treshold: {8}\n'\
-                      'Resuspension treshold: {9}\n'\
-                      'Expected dacay: {10}'
-                      .format(mydateB_string, argument.year, mydateE_string, \
+                      'Period: {0} {1} - {2} {3} \n'\
+                      'Salinity thresholds: {4} - {5}\n'\
+                      'Temperature thresholds: {6} - {7}\n'\
+                      'Half saturation constant for food: {8}\n'\
+                      'Oxygen lower treshold: {9}\n'\
+                      'Resuspension treshold: {10}\n'\
+                      'Expected dacay: {11}'
+                      .format(mydateB_string, argument.year_begin, mydateE_string, argument.year_end, \
                               argument.salinity_low, argument.salinity_high, argument.temperature_low,\
                               argument.temperature_high, argument.food, argument.oxygen_low,\
                               argument.resuspension, argument.decay, dt_string), \
