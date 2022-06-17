@@ -10,7 +10,8 @@ To build this image: <br />
 
 
 Available parameters:  <br />
-- years : the input year, default: 2009 <br />
+- yb : the first year, default: 2009 <br />
+- ye : the last year, default: 2011 <br />
 - mb : the first month input, default: 5 <br />
 - me : the last month input (it will only run if mb is also given and vice versa), default: 9 <br />
 - sl : salinity lower treshold, default: 16 <br />
@@ -31,6 +32,6 @@ Available parameters:  <br />
 - Nbb: Bounding box north, default: 57.05 <br />
 
 To run the container: <br />
-- "docker run forcoast-sm-a3 years mb me sl su tl tu kf o kr d tb tc b m Wbb Ebb Sbb Nbb" all parameters need to be given <br />
-- Example with default values: "docker run forcoast-sm-a3 2009 5 9 16 28 5 26 0.75 4.5 0.5 -4 5267228188:AAGx60FtWgHkScBb3ISFL1dp6Oq_9z9z0rw -1001773490347 ./output/bulletin.png file 8.18 9.5 56.45 57.05"
+- "docker run forcoast-sm-a3 yb ye mb me sl su tl tu kf o kr d tb tc b m Wbb Ebb Sbb Nbb" all parameters need to be given <br />
+- Example with default values: "docker run forcoast-sm-a3 2009 2011 5 9 16 28 5 26 0.75 4.5 0.5 -4 5267228188:AAGx60FtWgHkScBb3ISFL1dp6Oq_9z9z0rw -1001773490347 ./output/bulletin.png file 8.18 9.5 56.45 57.05"
 
