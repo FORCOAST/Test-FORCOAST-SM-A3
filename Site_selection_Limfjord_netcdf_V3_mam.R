@@ -19,35 +19,35 @@ args <- commandArgs(trailingOnly = TRUE)
 
 paramLst = list(botsalt=c("botS","3D",F),bottemp=c("botT","3D",F),chl=c("botchl","3D",F),oxy=c("botoxy","3D",F),resup=c("resup_dd","2D",F),fsal=c("botS","3D",T),ftem=c("botT","3D",T),fchl=c("botchl","3D",T),foxy=c("botoxy","3D",T),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T))
 #Args[12] = western bb, args[13] = eastern bb, args [14] = southern bb, args [15] = northern bb
-Wbb <- as.numeric(args[12])
-Ebb <- as.numeric(args[13])
-Sbb <- as.numeric(args[14])
-Nbb <- as.numeric(args[15])
+Wbb <- as.numeric(args[13])
+Ebb <- as.numeric(args[14])
+Sbb <- as.numeric(args[15])
+Nbb <- as.numeric(args[16])
 lm <- c(Wbb, Ebb, Sbb, Nbb) # area size
 pal=cmocean("haline")
 #Define figure titles
-names <- list(botsalt=c("Bottom salinity", "PSU\n"), bottemp=c("Bottom water temperature", "\U000000B0C\n"), chl=c("Chrolophyll concentration", "    mg-chl/m\U00B3\n"), oxy=c("Oxygen concentration","   mg-O\U00B2/L\n"), resup=c("resuspension",""), fsal=c("f salinity",""), ftem=c("f temperature",""), fchl=c("f chlorophyll",""), foxy=c("f oxy",""), fres= c("f resuspension",""), ssi=c("Site suitability index","  Index\n\t1 = Most suitable\n\t0 = Least suitable\n"))
+names <- list(botsalt=c("Bottom salinity (psu)", "psu\n"), bottemp=c("Bottom water temperature (\U000000B0C)", "\U000000B0C\n"), chl=c("Chrolophyll concentration (mg/m\U00B3)", "    mg/m\U00B3\n"), oxy=c("Oxygen concentration (mmol/m\U00B3)","   mmol/m\u00b3\n"), resup=c("resuspension",""), fsal=c("f salinity",""), ftem=c("f temperature",""), fchl=c("f chlorophyll",""), foxy=c("f oxy",""), fres= c("f resuspension",""), ssi=c("Site suitability index","  Index\n\t1 = Most suitable\n\t0 = Least suitable\n"))
 
 
 ########## User settings ##########
 
 defSet = list(
 	param = Sys.getenv("param", "ssi"),
-	yrs = args[1],
-	mths = as.numeric(args[2]:as.numeric(args[3])),
+	yrs = as.numeric(args[1]:as.numeric(args[2])),
+	mths = as.numeric(args[3]:as.numeric(args[4])),
 	# salinity threshold (range: 8 to 36)
-	SLT = as.numeric(args[4]), # salinity lower threshold
-	SUT = as.numeric(args[5]), # salinity upper threshold
+	SLT = as.numeric(args[5]), # salinity lower threshold
+	SUT = as.numeric(args[6]), # salinity upper threshold
 	# temperature threshold (range: 0 to 35)
-	TLT = as.numeric(args[6]), # temperature lower threshold 5
-	TUT = as.numeric(args[7]), # temperature upper threshold 26
+	TLT = as.numeric(args[7]), # temperature lower threshold 5
+	TUT = as.numeric(args[8]), # temperature upper threshold 26
 	# half saturation constant for food
-	Kf = as.numeric(args[8]),  #mg chl/m3
+	Kf = as.numeric(args[9]),  #mg chl/m3
 	# O2 lower threshold
-	O2LT = as.numeric(args[9]),
+	O2LT = as.numeric(args[10]),
 	# threshold resuspension
-	Kr = as.numeric(args[10]), #  g-POM/m2/d
-	decay_dd = as.numeric(args[11]) # exp decay
+	Kr = as.numeric(args[11]), #  g-POM/m2/d
+	decay_dd = as.numeric(args[12]) # exp decay
 )
 
 
