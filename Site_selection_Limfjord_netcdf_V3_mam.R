@@ -4,10 +4,12 @@
 #make color coded area plots
 
 ########## Script settings ##########
+
 require(ncdf4)
 require(cmocean)
 require(maptools)
 require(fields)
+require(raster)
 
 #Janus
 #setwd("C:\\AU\\projects\\FORCOAST\\siteSelectionTool")
@@ -18,12 +20,7 @@ datFldr = "/usr/src/app/"
 args <- commandArgs(trailingOnly = TRUE)
 
 paramLst = list(botsalt=c("botS","3D",F),bottemp=c("botT","3D",F),chl=c("botchl","3D",F),oxy=c("botoxy","3D",F),resup=c("resup_dd","2D",F),fsal=c("botS","3D",T),ftem=c("botT","3D",T),fchl=c("botchl","3D",T),foxy=c("botoxy","3D",T),fres=c("resup_dd","2D",T),ssi=c("ssi","4D",T))
-#Args[12] = western bb, args[13] = eastern bb, args [14] = southern bb, args [15] = northern bb
-Wbb <- as.numeric(args[13])
-Ebb <- as.numeric(args[14])
-Sbb <- as.numeric(args[15])
-Nbb <- as.numeric(args[16])
-lm <- c(Wbb, Ebb, Sbb, Nbb) # area size
+lm <- c(8.18, 9.5, 56.45, 57.05) # area size
 pal=cmocean("haline")
 #Define figure titles
 names <- list(botsalt=c("Bottom salinity (psu)", "psu\n"), bottemp=c("Bottom water temperature (\U000000B0C)", "\U000000B0C\n"), chl=c("Chrolophyll concentration (mg/m\U00B3)", "    mg/m\U00B3\n"), oxy=c("Oxygen concentration (mmol/m\U00B3)","   mmol/m\u00b3\n"), resup=c("resuspension",""), fsal=c("f salinity",""), ftem=c("f temperature",""), fchl=c("f chlorophyll",""), foxy=c("f oxy",""), fres= c("f resuspension",""), ssi=c("Site suitability index","  Index\n\t1 = Most suitable\n\t0 = Least suitable\n"))
@@ -83,6 +80,9 @@ plotData <- function(uset,dat,pngfile=NA,figname) {
 	plot(NA,xlim=lm[1:2],ylim=lm[3:4],asp=1,xlab="",ylab="")
 	mtext(figname[1],line=0.5,cex=2)
 	image(dat$lon,dat$lat,t(dat$dat),col=pal(100),add=T)
+	flippedMatrix <- dat$dat[nrow(dat$dat):1,]
+	rasterFormat <- raster(flippedMatrix, xmn=8.186484, xmx=10.2941, ymn=56.46693, ymx=57.09677, crs="EPSG:4326")
+	writeRaster(rasterFormat, paste0(datFldr,"Bulletin/", uset$param), format = "GTiff", overwrite=TRUE)
 	plot(spcoast,col="#B4D79E",axes=T,add=T,lwd=1,border="grey")
 	image.plot(dat$dat, col = pal(100), legend.shrink = 0.98, ann = F,legend.only=T,legend.width = 2,legend.mar=0,legend.args=list(text=figname[2], side=3, font=3, line=0, cex=1.1))
 	if (!is.na(pngfile)) dev.off()
@@ -145,14 +145,14 @@ doAll <- function(figname,uset,pngfile="plot.png",usefunc=mean) {
 
 #Examples of use
 #test=getData("botsalt")
-uset=defSet; uset$param="botsalt"; uset$yrs=2009:2010; uset$SLT=17; uset$SUT=27; doAll(names$botsalt,uset,pngfile="output/botsalt.png")
-uset=defSet; uset$param="bottemp"; uset$yrs=c(2009,2011,2013,2015,2017); uset$mths=6:7; uset$TUT=25; doAll(names$bottemp,uset,pngfile="output/bottemp.png")
-uset=defSet; uset$param="chl"; uset$yrs=2017; uset$mths=1:12; uset$Kf=0.8; doAll(names$chl,uset,pngfile="output/chl.png")
-uset=defSet; uset$param="oxy"; uset$O2LT=4.0; doAll(names$oxy,uset,pngfile="output/oxy.png")
-uset=defSet; uset$param="resup"; uset$yrs=2009:2017; uset$mths=1:12; uset$Kr = 0.40; uset$decay_dd=-3; doAll(names$resup,uset,pngfile="output/resup.png")
-uset=defSet; uset$param="fsal"; uset$yrs=2012; uset$mths=5; doAll(names$fsal,uset,pngfile="output/fsal.png")
+uset=defSet; uset$param="botsalt"; doAll(names$botsalt,uset,pngfile="output/botsalt.png")
+uset=defSet; uset$param="bottemp"; doAll(names$bottemp,uset,pngfile="output/bottemp.png")
+uset=defSet; uset$param="chl"; doAll(names$chl,uset,pngfile="output/chl.png")
+uset=defSet; uset$param="oxy"; doAll(names$oxy,uset,pngfile="output/oxy.png")
+uset=defSet; uset$param="resup"; doAll(names$resup,uset,pngfile="output/resup.png")
+uset=defSet; uset$param="fsal"; doAll(names$fsal,uset,pngfile="output/fsal.png")
 uset=defSet; uset$param="ftem"; doAll(names$ftem,uset,pngfile="output/ftem.png")
-uset=defSet; uset$param="fchl"; uset$yrs=2017; uset$mths=7; doAll(names$fchl,uset,pngfile="output/fchl.png")
-uset=defSet; uset$param="foxy"; uset$yrs=2009:2015; uset$mths=3:10; doAll(names$foxy,uset,pngfile="output/foxy.png")
-uset=defSet; uset$param="fres"; uset$yrs=2012; uset$mths=5; doAll(names$fres,uset,pngfile="output/fres.png")
-uset=defSet; uset$yrs=2009:2017; uset$mths=mths=1:12; doAll(names$ssi,uset,pngfile="output/ssi.png") #everything
+uset=defSet; uset$param="fchl"; doAll(names$fchl,uset,pngfile="output/fchl.png")
+uset=defSet; uset$param="foxy"; doAll(names$foxy,uset,pngfile="output/foxy.png")
+uset=defSet; uset$param="fres"; doAll(names$fres,uset,pngfile="output/fres.png")
+uset=defSet; doAll(names$ssi,uset,pngfile="output/ssi.png") #everything

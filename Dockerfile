@@ -1,15 +1,28 @@
-FROM r-base
+FROM r-base:4.2.1
 
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev python3.10 python3-pip python3-setuptools python3-dev
-RUN pip3 install --upgrade pip
+RUN apt-get update
+RUN apt-get install sudo -y
+RUN apt-get install gnupg -y
+RUN apt-get install software-properties-common -y
+RUN apt-get install wget -y
+RUN apt-get install -y libnetcdf-*
+RUN apt-get install libgdal-dev -y
+
+RUN wget -O /usr/local/bin/mc https://dl.min.io/client/mc/release/linux-amd64/mc && \
+    chmod +x /usr/local/bin/mc
+RUN wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+RUN chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
+RUN add-apt-repository "deb https://qgis.org/debian $(lsb_release -c -s) main"
+RUN DEBIAN_FRONTEND=noninteractive apt-get install qgis -y 
+RUN apt install python3-pip -y
 
 ENV PYTHONPATH "${PYTHONPATH}:/app"
 WORKDIR /app
 
-RUN pip install telepot
-RUN pip install argparse
-RUN pip install requests
-RUN pip install Pillow
+RUN pip install telepot==12.7
+RUN pip install argparse==1.4.0
+RUN pip install Pillow==9.2.0
+RUN pip install PyQt5==5.15.7
 
 RUN mkdir -p /usr/src/app
 
@@ -37,13 +50,8 @@ COPY ./nc_files_2015 /usr/src/app/nc_files_2015
 COPY ./nc_files_2016 /usr/src/app/nc_files_2016
 COPY ./nc_files_2017 /usr/src/app/nc_files_2017
 
-RUN apt-get update -y
-
-RUN apt-get install -y libnetcdf-*
-
 RUN Rscript /usr/src/app/install_packages.R
 
 RUN chmod 755 /usr/src/app/run.sh
 
-# ENTRYPOINT ["bash", "-c"]
 ENTRYPOINT ["sh", "/usr/src/app/run.sh"]
