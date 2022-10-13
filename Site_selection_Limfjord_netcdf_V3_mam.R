@@ -1,3 +1,20 @@
+#(C) Copyright FORCOAST H2020 project under Grant No. 870465. All rights reserved.
+
+# Copyright notice
+# --------------------------------------------------------------------
+#  Copyright 2022 Aarhus University
+#   Janus Larsen, Marie Maar
+#
+#   janus@ecos.au.dk, mam@ecos.au.dk
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+# --------------------------------------------------------------------
+
 #Aarhus University January 2022, Ecoscience, Janus Larsen & Marie Maar. janus@ecos.au.dk
 #extract data from gridded FlexSem model output (NetCdf 4.0) and calculate statistcs
 #calculate site selection indicies
